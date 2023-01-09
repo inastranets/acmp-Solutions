@@ -2,38 +2,58 @@
 
 using namespace std;
 
+const int N = 100;
 vector<vector<int> > adj;
-vector<int> s, b;
+queue<int> q;
+int distanse[N + 1];
+bool visited[N + 1];
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
-	int n, A, B;
+
+	int n;
 	cin >> n;
+
 	adj.resize(n + 1);
-	for(int u = 1; u <= n; ++u) {
-		for(int v = 1; v <= n; ++v) {
+
+	for(int u = 1; u <= n; ++ u) {
+		for(int v = 1; v <= n; ++ v) {
 			bool x;
 			cin >> x;
-			if(x)
+			if(x == 0 && v!=u) {
+				distanse[v] = N;
+				distanse[u] = N;
+			}
+				
+			if(x) 
 				adj[u].push_back(v);
 		}
-	}
+	} 
+	
+	int A, B;
 
 	cin >> A >> B;
 
-	s.resize(n + 1);
+	q.push(A);
+	visited[A]=true;
+	distanse[A] = 0;
 
-	s[A] = 1;
-	b.push_back(A);
-	for(int i = 0; i < b.size(); ++ i) {
-		int to = b[i];
-		for(auto u:adj[to])
-			if(s[u] == 0){
-				s[u] = s[to] + 1;
-				b.push_back(u);
-			}
-		
+	while(!q.empty()) {
+		int s = q.front();
+		q.pop();
+		for(auto to:adj[s]) {
+			if(visited[to])
+				continue;
+			visited[to] = true;
+			distanse[to] = distanse[s] + 1;
+			q.push(to);
+		}
 	}
-	cout << s[B] - 1;	
+
+	if(distanse[B] == N)
+		distanse[B] = -1;
+
+	cout << distanse[B];
+
 	return 0;
 }
